@@ -1307,9 +1307,11 @@ function ContainerYardOverview({ review, selectedContainerId, selectedPosition, 
                       {isFullscreen ? "Clique em um container para abrir os detalhes laterais. Clique novamente no mesmo CT para ocultar." : "Passe o mouse em um container para ver o resumo rápido. Clique para selecionar o CT."}
                     </p>
                   </div>
-                  <div className="grid grid-cols-2 md:grid-cols-4 gap-2 min-w-[520px]">
+                  <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-2 min-w-[780px]">
                     <LargeInfo label="Containers" value={review.containers.length} />
                     <LargeInfo label="Caixas totais" value={review.containers.reduce((s, c) => s + computeContainerTotals(c).boxes, 0)} />
+                    <LargeInfo label="Caixas engorda" value={review.containers.reduce((s, c) => s + computeContainerTotals(c).fatteningBoxes, 0)} />
+                    <LargeInfo label="Caixas maternidade" value={review.containers.reduce((s, c) => s + computeContainerTotals(c).maternityBoxes, 0)} />
                     <LargeInfo label="Dieta total" value={`${review.containers.reduce((s, c) => s + computeContainerTotals(c).dietKg, 0).toFixed(1)} kg`} />
                     <LargeInfo label="Posições em uso" value={`${review.containers.reduce((s, c) => s + computeContainerTotals(c).filled, 0)}/${review.containers.length * 8}`} />
                   </div>
@@ -1467,7 +1469,7 @@ function ExteriorContainer20ft({ container, index, active, hovered, showPopover,
       onMouseEnter={onMouseEnter}
       onMouseLeave={onMouseLeave}
     >
-      {showPopover && <ContainerInfoBalloon container={container} totals={totals} status={status} fullscreen={fullscreen} />}
+      {showPopover && <ContainerInfoBalloon container={container} totals={totals} status={status} fullscreen={fullscreen} tv={tv} />}
 
       <button
         type="button"
@@ -1558,53 +1560,57 @@ function ExteriorContainer20ft({ container, index, active, hovered, showPopover,
   );
 }
 
-function ContainerInfoBalloon({ container, totals, status }) {
+function ContainerInfoBalloon({ container, totals, status, tv = false }) {
   const meta = statusMeta(status);
   const ocupacao = Math.round((totals.filled / 8) * 100);
 
   return (
     <div
-      className="absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[88%] w-[560px] rounded-xl border bg-white shadow-xl p-3"
+      className={
+        tv
+          ? "absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[92%] w-[760px] rounded-2xl border bg-white shadow-2xl p-4"
+          : "absolute left-1/2 -translate-x-1/2 top-0 -translate-y-[88%] w-[620px] rounded-xl border bg-white shadow-xl p-3.5"
+      }
       style={{ borderColor: BRAND.line, zIndex: 120 }}
     >
       <div
         className="absolute left-1/2 -translate-x-1/2 -bottom-1.5 w-3 h-3 rotate-45 border"
         style={{ backgroundColor: "#FFFFFF", borderColor: BRAND.line, borderLeft: "none", borderTop: "none" }}
       />
-      <div className="grid grid-cols-[130px_minmax(0,1fr)] gap-3 items-start">
-        <div className="space-y-2">
+      <div className={tv ? "grid grid-cols-[170px_minmax(0,1fr)] gap-4 items-start" : "grid grid-cols-[140px_minmax(0,1fr)] gap-3 items-start"}>
+        <div className="space-y-2.5">
           <div>
-            <p className="text-[9px] uppercase tracking-[0.14em] font-semibold leading-none" style={{ color: BRAND.muted }}>resumo</p>
-            <h4 className="text-base font-semibold leading-tight mt-1" style={{ color: BRAND.text }}>{container.name}</h4>
+            <p className={tv ? "text-[11px] uppercase tracking-[0.16em] font-semibold leading-none" : "text-[9px] uppercase tracking-[0.14em] font-semibold leading-none"} style={{ color: BRAND.muted }}>resumo</p>
+            <h4 className={tv ? "text-2xl font-semibold leading-tight mt-1" : "text-lg font-semibold leading-tight mt-1"} style={{ color: BRAND.text }}>{container.name}</h4>
           </div>
-          <span className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-semibold" style={{ backgroundColor: meta.bg, color: meta.color }}>
-            <span className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: meta.color }} /> {status}
+          <span className={tv ? "inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold" : "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-semibold"} style={{ backgroundColor: meta.bg, color: meta.color }}>
+            <span className={tv ? "h-2.5 w-2.5 rounded-full" : "h-1.5 w-1.5 rounded-full"} style={{ backgroundColor: meta.color }} /> {status}
           </span>
         </div>
 
-        <div className="grid grid-cols-5 gap-1.5">
-          <MiniBalloonInfo label="Caixas" value={totals.boxes} />
-          <MiniBalloonInfo label="Posições" value={`${totals.filled}/8`} />
-          <MiniBalloonInfo label="Ocupação" value={`${ocupacao}%`} />
-          <MiniBalloonInfo label="Dieta" value={`${totals.dietKg.toFixed(1)} kg`} />
-          <MiniBalloonInfo label="Alertas" value={`${totals.attention}/${totals.critical}`} tone={totals.critical ? "danger" : totals.attention ? "warn" : "default"} />
-          <MiniBalloonInfo label="Engorda" value={`${totals.fatteningBoxes} cx`} />
-          <MiniBalloonInfo label="Mater." value={`${totals.maternityBoxes} cx`} />
-          <MiniBalloonInfo label="Vent." value={container.ventilacao || "-"} />
-          <MiniBalloonInfo label="Recirc." value={container.recirculacao || "-"} />
-          <MiniBalloonInfo label="Setpoint" value={`${container.setpoint || "-"} °C`} />
+        <div className={tv ? "grid grid-cols-5 gap-2" : "grid grid-cols-5 gap-1.5"}>
+          <MiniBalloonInfo label="Caixas" value={totals.boxes} tv={tv} />
+          <MiniBalloonInfo label="Posições" value={`${totals.filled}/8`} tv={tv} />
+          <MiniBalloonInfo label="Ocupação" value={`${ocupacao}%`} tv={tv} />
+          <MiniBalloonInfo label="Dieta" value={`${totals.dietKg.toFixed(1)} kg`} tv={tv} />
+          <MiniBalloonInfo label="Alertas" value={`${totals.attention}/${totals.critical}`} tone={totals.critical ? "danger" : totals.attention ? "warn" : "default"} tv={tv} />
+          <MiniBalloonInfo label="Engorda" value={`${totals.fatteningBoxes} cx`} tv={tv} />
+          <MiniBalloonInfo label="Mater." value={`${totals.maternityBoxes} cx`} tv={tv} />
+          <MiniBalloonInfo label="Vent." value={container.ventilacao || "-"} tv={tv} />
+          <MiniBalloonInfo label="Recirc." value={container.recirculacao || "-"} tv={tv} />
+          <MiniBalloonInfo label="Setpoint" value={`${container.setpoint || "-"} °C`} tv={tv} />
         </div>
       </div>
     </div>
   );
 }
 
-function MiniBalloonInfo({ label, value, tone = "default" }) {
+function MiniBalloonInfo({ label, value, tone = "default", tv = false }) {
   const color = tone === "danger" ? BRAND.danger : tone === "warn" ? BRAND.warn : BRAND.text;
   return (
-    <div className="rounded-lg border bg-white px-2 py-1.5" style={{ borderColor: BRAND.line }}>
-      <p className="text-[9px] font-semibold leading-none" style={{ color: BRAND.muted }}>{label}</p>
-      <p className="text-[10px] font-bold mt-1 leading-none truncate" style={{ color }}>{value}</p>
+    <div className={tv ? "rounded-xl border bg-white px-3 py-2.5" : "rounded-lg border bg-white px-2 py-1.5"} style={{ borderColor: BRAND.line }}>
+      <p className={tv ? "text-[11px] font-semibold leading-none" : "text-[9px] font-semibold leading-none"} style={{ color: BRAND.muted }}>{label}</p>
+      <p className={tv ? "text-base font-bold mt-1.5 leading-none truncate" : "text-[10px] font-bold mt-1 leading-none truncate"} style={{ color }}>{value}</p>
     </div>
   );
 }
