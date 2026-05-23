@@ -1356,6 +1356,8 @@ function TVContainerWall({ review, selectedContainerId, onSelectContainer, onExi
   const selectedPanelTotals = selectedPanelContainer ? computeContainerTotals(selectedPanelContainer) : null;
   const totalBoxes = review.containers.reduce((s, c) => s + computeContainerTotals(c).boxes, 0);
   const totalDiet = review.containers.reduce((s, c) => s + computeContainerTotals(c).dietKg, 0);
+  const totalFatteningBoxes = review.containers.reduce((s, c) => s + computeContainerTotals(c).fatteningBoxes, 0);
+  const totalMaternityBoxes = review.containers.reduce((s, c) => s + computeContainerTotals(c).maternityBoxes, 0);
   const filled = review.containers.reduce((s, c) => s + computeContainerTotals(c).filled, 0);
   const totalPositions = review.containers.length * 8;
 
@@ -1378,9 +1380,11 @@ function TVContainerWall({ review, selectedContainerId, onSelectContainer, onExi
             <h1 className="text-3xl font-semibold" style={{ color: BRAND.text }}>Pátio dos containers — {formatDateBR(review.date)}</h1>
           </div>
           <div className="flex items-center gap-3">
-            <div className="hidden lg:grid grid-cols-4 gap-2 w-[720px]">
+            <div className="hidden xl:grid grid-cols-6 gap-2 w-[1040px]">
               <LargeInfo label="Containers" value={review.containers.length} />
-              <LargeInfo label="Caixas" value={totalBoxes} />
+              <LargeInfo label="Caixas totais" value={totalBoxes} />
+              <LargeInfo label="Caixas engorda" value={totalFatteningBoxes} />
+              <LargeInfo label="Caixas maternidade" value={totalMaternityBoxes} />
               <LargeInfo label="Dieta total" value={`${totalDiet.toFixed(1)} kg`} />
               <LargeInfo label="Ocupação" value={`${filled}/${totalPositions}`} />
             </div>
