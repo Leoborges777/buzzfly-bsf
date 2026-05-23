@@ -772,13 +772,40 @@ export default function BSFContainerReviewSystem() {
   return (
     <div className="min-h-screen p-4 md:p-8" style={{ backgroundColor: BRAND.soft, color: BRAND.text }}>
       <style>{`
+        .bsf-action-row {
+          align-items: center;
+          row-gap: 0.5rem;
+        }
         .bsf-action-row button,
-        .bsf-nowrap-button {
+        .bsf-nowrap-button,
+        .bsf-status-chip {
           white-space: nowrap;
           min-width: max-content;
+          height: 40px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
+          gap: 0.45rem;
+          border-radius: 14px;
+          padding: 0 14px;
+          font-size: 13px;
+          font-weight: 700;
+          line-height: 1;
+        }
+        .bsf-primary-button {
+          height: 42px;
+          padding: 0 18px;
+          border-radius: 14px;
+          font-size: 13px;
+          font-weight: 800;
+          box-shadow: 0 6px 14px rgba(7,53,74,.12);
+        }
+        .bsf-toolbar-button {
+          height: 40px;
+          padding: 0 15px;
+          border-radius: 14px;
+          font-size: 13px;
+          font-weight: 700;
         }
         .bsf-container-door-line {
           pointer-events: none;
@@ -804,12 +831,12 @@ export default function BSFContainerReviewSystem() {
                 </div>
               </div>
               <div className="bsf-action-row flex flex-wrap gap-2">
-                <span className="inline-flex items-center rounded-xl border px-3 py-2 text-sm font-semibold" style={{ borderColor: BRAND.line, color: supabase ? BRAND.ok : BRAND.warn, backgroundColor: "#FFFFFF" }}>
+                <span className="bsf-status-chip border" style={{ borderColor: BRAND.line, color: supabase ? BRAND.ok : BRAND.warn, backgroundColor: "#FFFFFF" }}>
                   <Database className="h-4 w-4 mr-2" /> {syncStatus}
                 </span>
-                <Button variant="outline" onClick={exportJSON} className="rounded-xl"><Database className="h-4 w-4 mr-2" /> Backup</Button>
-                <Button variant="outline" onClick={importJSON} className="rounded-xl"><Database className="h-4 w-4 mr-2" /> Importar backup</Button>
-                <Button onClick={generatePDF} disabled={!currentReview} className="rounded-xl text-white" style={{ backgroundColor: BRAND.navy }}><Download className="h-4 w-4 mr-2" /> PDF dos containers</Button>
+                <Button variant="outline" onClick={exportJSON} className="bsf-toolbar-button"><Database className="h-4 w-4" /> Backup</Button>
+                <Button variant="outline" onClick={importJSON} className="bsf-toolbar-button"><Database className="h-4 w-4" /> Importar backup</Button>
+                <Button onClick={generatePDF} disabled={!currentReview} className="bsf-primary-button text-white" style={{ backgroundColor: BRAND.navy }}><Download className="h-4 w-4" /> PDF dos containers</Button>
               </div>
             </div>
           </div>
@@ -1042,8 +1069,8 @@ export default function BSFContainerReviewSystem() {
                   <h2 className="text-2xl font-semibold" style={{ color: BRAND.text }}>Relatório do dia</h2>
                   <p className="text-sm" style={{ color: BRAND.muted }}>Visualização consolidada para conferência e exportação em PDF.</p>
                 </div>
-                <Button onClick={generatePDF} disabled={!currentReview} className="rounded-xl text-white" style={{ backgroundColor: BRAND.navy }}>
-                  <Download className="h-4 w-4 mr-2" /> Exportar PDF
+                <Button onClick={generatePDF} disabled={!currentReview} className="bsf-primary-button text-white" style={{ backgroundColor: BRAND.navy }}>
+                  <Download className="h-4 w-4" /> Exportar PDF
                 </Button>
               </div>
 
